@@ -3,7 +3,6 @@ import time
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -38,7 +37,13 @@ def get_driver():
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/124.0.0.0 Safari/537.36"
     )
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    # Use chromium on GitHub Actions ubuntu
+    import shutil
+    chrome_bin = shutil.which("chromium-browser") or shutil.which("chromium") or shutil.which("google-chrome")
+    if chrome_bin:
+        options.binary_location = chrome_bin
+    chromedriver_bin = shutil.which("chromedriver") or "/usr/lib/chromium-browser/chromedriver"
+    driver = webdriver.Chrome(service=Service(chromedriver_bin), options=options)
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     return driver
 
