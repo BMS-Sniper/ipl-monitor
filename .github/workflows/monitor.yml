@@ -2,8 +2,8 @@ name: IPL Ticket Monitor
 
 on:
   schedule:
-    - cron: '* * * * *'   # every 1 minute
-  workflow_dispatch:        # manual trigger from GitHub UI
+    - cron: '* * * * *'
+  workflow_dispatch:
 
 jobs:
   monitor:
@@ -20,16 +20,12 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Chrome
+      - name: Install Chrome + ChromeDriver
         run: |
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
           sudo apt-get update -q
-          sudo apt-get install -y google-chrome-stable
-
-      - name: Install ChromeDriver
-        run: |
-          pip install webdriver-manager
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          which chromium-browser || which chromium
+          chromedriver --version
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt
